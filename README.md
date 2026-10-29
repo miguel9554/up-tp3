@@ -188,6 +188,8 @@ Cada corrida escribe en `<corrida>/reports/`:
 | `routing.md` | Routing global (uso de cada capa, overflow), routing detallado (iteraciones, violaciones, largo por capa, vías), antenas, celdas de relleno | `route` |
 | `timing.md`  | Timing en cada etapa, timing en las tres esquinas y caminos críticos | |
 
+Qué es cada fila y cada columna de cada tabla: [docs/reportes.md](docs/reportes.md).
+
 Algunas definiciones:
 
 - **Latencia de clock:** cuánto tarda el flanco de clock en llegar desde el

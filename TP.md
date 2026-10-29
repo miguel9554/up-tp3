@@ -179,31 +179,6 @@ GUI (`make gui`).
     del árbol? ¿Los flip-flops (las hojas) quedan todos a la misma altura?
     ¿Por qué no?
 
-### 1.3 Timing después de CTS
-
-- **P6.** Completá con `timing.md` de la corrida de CTS:
-
-  | Esquina `tt` | TP2 (placement) | Después de CTS |
-  | :----------- | --------------: | -------------: |
-  | Setup WS (ns) | | |
-  | Hold WS (ns) | | |
-  | Latencia de clock mín / máx (ns) | | |
-  | Skew (ns) | | |
-
-  - El slack de setup **empeoró**. Compará el camino crítico de setup del
-    TP2 (`designs/ibex/tp2/reports/timing.md`) con el de ahora
-    (`timing.md`): ¿empiezan y terminan en el mismo lugar? ¿En qué instante
-    llega el clock a la SRAM (`clk0`) en cada uno? ¿Cambió el retardo del
-    resto del camino?
-  - El camino termina en un pin de salida (`instr_addr_o`). El *data
-    required time* ¿cambió? ¿Por qué la latencia del clock perjudica
-    justamente a los caminos que van de un registro a una salida?
-  - En un camino entre dos flip-flops, ¿la latencia también empeoraría el
-    slack? ¿Qué es lo que importa en ese caso?
-  - Según la sección *Timing repair after CTS* de `cts.md`, ¿hizo falta
-    reparar setup o hold? ¿Por qué el hold sigue cumpliéndose aunque ahora
-    haya skew? (Compará el skew con el slack de hold.)
-
 ---
 
 ## Ejercicio 2: Routing
@@ -223,7 +198,7 @@ la GUI.
 **Qué se debe lograr:** entender las dos etapas del routing y saber leer sus
 resultados.
 
-- **P7.** Routing global (`routing.md`, sección *Global routing*).
+- **P6.** Routing global (`routing.md`, sección *Global routing*).
   - Completá:
 
     | Capa | Dirección | Recursos (después del ajuste) | Uso (%) | Overflow |
@@ -242,7 +217,7 @@ resultados.
     `GRT-0088`.)
   - ¿Qué significa que el overflow sea 0? ¿Qué es el "ajuste" (*global
     adjustment*) del 30 % y por qué conviene dejar ese margen?
-- **P8.** Largo de cables. Completá con `qor.md` y `routing.md`:
+- **P7.** Largo de cables. Completá con `qor.md` y `routing.md`:
 
   | Etapa | Wirelength (µm) |
   | :---- | --------------: |
@@ -257,7 +232,7 @@ resultados.
   - El routing global da un largo mayor que el detallado. ¿Por qué puede
     pasar eso? (Pensá en con qué resolución trabaja el routing global: las
     gcells.)
-- **P9.** Routing detallado (`routing.md`, sección *Detailed routing*).
+- **P8.** Routing detallado (`routing.md`, sección *Detailed routing*).
   - ¿Cuántas violaciones de DRC había después de la primera iteración, y
     cuántas al final? ¿De qué tipo eran la mayoría y en qué capa? Explicá qué
     es un *short* y qué es una violación de *metal spacing*.
@@ -270,10 +245,10 @@ resultados.
   - ¿Cuánto tardó el routing detallado en tu computadora
     (`10-openroad-detailedrouting/runtime.txt`)? ¿Y todo el `make route`?
     ¿Qué etapa es la más cara?
-- **P10.** El layout ruteado en la GUI (`make gui RUN=rt_ref_... STEP=10`).
+- **P9.** El layout ruteado en la GUI (`make gui RUN=rt_ref_... STEP=10`).
   - Incluí una captura del chip completo con todas las capas y otra con
     **una sola capa** (por ejemplo `met2`). ¿Se cumple la dirección
-    preferida que anotaste en la P7?
+    preferida que anotaste en la P6?
   - Hacé zoom sobre unas pocas celdas estándar hasta ver sus pines y las
     vías (captura). ¿En qué capa están los pines de las celdas? ¿Cómo sube
     un cable desde un pin hasta met2?
@@ -287,97 +262,61 @@ resultados.
     una regla especial, con más separación a los vecinos. ¿Para qué crees
     que sirve?
 
-### 2.2 Antenas, relleno y chequeos
+### 2.2 Antenas y relleno
 
-- **P11.** El efecto antena (definición en la sección 4 del `README.md`).
+- **P10.** El efecto antena (definición en la sección 4 del `README.md`).
   - Explicá con tus palabras por qué un cable largo puede dañar la
-    compuerta de un transistor **durante la fabricación**, y por qué el
-    problema depende de la capa de metal (se fabrican de abajo hacia
-    arriba).
+    compuerta de un transistor **durante la fabricación**.
   - Completá con `routing.md`:
 
     | Ítem | Valor |
     | :--- | ----: |
     | Nets con violaciones de antena después del routing global | |
-    | *Jumpers* insertados (suma de los pasos) | |
-    | Diodos insertados después del routing global | |
-    | Diodos insertados durante el routing detallado | |
+    | Diodos insertados (total) | |
     | Nets con violaciones al final | |
 
-  - ¿Qué hace un *jumper* y qué hace un diodo? ¿Por qué el diodo descarga
-    el cable?
-  - Mirá los nets de `06-openroad-checkantennas/reports/antenna_summary.rpt`.
-    ¿Qué tipo de nets tienen las peores violaciones? ¿A qué celdas van?
-    (Relacionalo con la P15 del TP2.)
-  - Buscá en la GUI alguna celda de diodo (sus instancias se llaman
-    `ANTENNA_*`). ¿Dónde está, respecto del pin que protege?
-- **P12.** Relleno y chequeos (`routing.md`, sección *Checks after detailed
-  routing*).
-  - ¿Cuántas celdas de relleno se insertaron (paso 18)? ¿De qué tipos son
-    (`fill`, `decap`)? ¿Para qué sirve cada tipo? ¿Por qué no se pueden
-    dejar huecos vacíos en las filas? (Pensá en los pozos de la P8 del TP2.)
-    Comparalo en la GUI con `STEP=10` y `STEP=18`.
-  - Hay pines desconectados (*disconnected pins*), pero ninguno es crítico.
-    Mirá `14-odb-reportdisconnectedpins/full_disconnected_pins_table.txt`:
-    ¿de qué instancias son? ¿Por qué es normal que estén desconectados?
+  - ¿Qué hace un *jumper* y qué hace un diodo?
+- **P11.** Relleno (`routing.md`, sección *Checks after detailed routing*).
+  ¿Cuántas celdas de relleno se insertaron? ¿Para qué sirven? Comparalo en
+  la GUI con `STEP=10` y `STEP=18`.
 
 ---
 
 ## Ejercicio 3: Timing final
 
 **Qué se debe lograr:** seguir el timing del diseño a lo largo de todo el
-flujo, y entender qué aporta cada etapa.
+flujo.
 
-- **P13.** Completá esta tabla con la sección *Timing at each stage* de
+- **P12.** Completá esta tabla con la sección *Timing at each stage* de
   `timing.md` de la corrida de routing (esquina `tt`):
 
-  | Etapa | Setup WS (ns) | Hold WS (ns) | Skew (ns) | Max slew vio | Max cap vio |
-  | :---- | ------------: | -----------: | --------: | -----------: | ----------: |
-  | TP1 (síntesis) | | | | | |
-  | TP2 (placement) | | | | | |
-  | Después de CTS | | | | | |
-  | Después del routing global | | | | | |
-  | Después del routing detallado + RCX | | | | | |
+  | Etapa | Setup WS (ns) | Hold WS (ns) | Skew (ns) |
+  | :---- | ------------: | -----------: | --------: |
+  | TP1 (síntesis) | | | |
+  | TP2 (placement) | | | |
+  | Después de CTS | | | |
+  | Después del routing global | | | |
+  | Después del routing detallado + RCX | | | |
 
-  - Explicá **cada** cambio del setup de una fila a la siguiente. Para las
-    dos primeras filas podés usar tu P14 del TP2.
-  - El camino crítico ¿sigue siendo el mismo que en el TP2? Compará en los
-    tres reportes (TP2, después de CTS y final) el instante en que llega el
-    clock a la SRAM (`clk0`), y el retardo y el slew del net largo que va al
-    buffer de salida (`net405`, entrada de `output405`). ¿Qué parte del
-    empeoramiento final se debe al clock y qué parte a los cables?
-  - ¿Por qué el skew creció después del routing?
-  - ¿Qué es lo que hace el STA final más "real" que los anteriores? ¿Qué
-    tiene el archivo SPEF (`20-openroad-rcx/nom/ibex_top.nom.spef`)? Para
-    achicarlo, el SPEF reemplaza cada nombre por un número: buscá la línea
-    que termina en ` net405` (en la sección `*NAME_MAP`), anotá su número
-    (`*<n>`) y buscá `*D_NET *<n>`. ¿Qué datos tiene? ¿Cuál es la capacidad
-    total del net? ¿A qué pines se conecta? ¿Por qué tiene tantos diodos?
-- **P14.** Violaciones nuevas.
-  - Después del routing detallado aparecen muchas más violaciones de max
-    slew y max cap que antes. ¿En qué pines están? (Buscalas en
-    `21-openroad-stapostpnr/nom_tt_025C_1v80/checks.rpt`.) ¿Qué tienen en
-    común esos nets? Compará con los nets más largos de `routing.md`.
-  - ¿Por qué no aparecieron antes, con los cables estimados? ¿Cómo influyen
-    los diodos de antena (fijate si aparecen pines `ANTENNA_*/DIODE`)?
-  - ¿Por qué nadie las reparó? Mirá las variables `RUN_POST_GRT_DESIGN_REPAIR`
-    y `RUN_POST_GRT_RESIZER_TIMING` en la sección 3.1 del `README.md`. ¿Qué
-    harías en un diseño real antes de fabricarlo?
-- **P15.** Esquinas. Completá con la sección *Corners, after detailed
+  - ¿En qué etapas empeoró el setup? ¿Por qué?
+  - Compará el camino crítico del TP2 con el final: ¿en qué instante llega
+    el clock a la SRAM (`clk0`) en cada uno? ¿Cuánto tarda el net `net405`?
+    ¿Qué parte del empeoramiento se debe al clock y qué parte a los cables?
+- **P13.** Violaciones nuevas. Después del routing detallado aparecen más
+  violaciones de max slew y max cap (columnas *Max slew vio* y *Max cap vio*
+  de la misma tabla). ¿Por qué no aparecieron antes, con los cables
+  estimados?
+- **P14.** Esquinas. Completá con la sección *Corners, after detailed
   routing* de `timing.md`:
 
-  | Esquina | Setup WS (ns) | Hold WS (ns) | Max slew vio | Max cap vio |
-  | :------ | ------------: | -----------: | -----------: | ----------: |
-  | `ss` | | | | |
-  | `tt` | | | | |
-  | `ff` | | | | |
+  | Esquina | Setup WS (ns) | Hold WS (ns) |
+  | :------ | ------------: | -----------: |
+  | `ss` | | |
+  | `tt` | | |
+  | `ff` | | |
 
-  - ¿Qué esquina es la peor para setup y cuál para hold? ¿Por qué? (Pensá en
-    qué pasa con el retardo de las celdas en cada una.)
-  - ¿Por qué en `ss` hay tantas más violaciones de max slew?
-  - Con 100 ns de período, ¿el diseño cumple el timing en las tres
-    esquinas? ¿Qué número mirarías para decidir si podría andar a una
-    frecuencia mayor?
+  - ¿Qué esquina es la peor para setup y cuál para hold? ¿Por qué?
+  - ¿El diseño cumple el timing en las tres esquinas?
 
 ---
 
